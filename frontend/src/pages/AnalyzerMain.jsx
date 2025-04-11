@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BASE_URL from "../../config";
 import {
   Upload,
@@ -6,6 +6,9 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  RefreshCw,
 } from "lucide-react";
 
 export default function Analyzer() {
@@ -13,6 +16,7 @@ export default function Analyzer() {
   const [preview, setPreview] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
+  const [viewMode, setViewMode] = useState("side-by-side");
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -26,6 +30,10 @@ export default function Analyzer() {
       setAnalysis(null);
     }
   };
+
+  useEffect(() => {
+    console.log(analysis);
+  }, [analysis]);
 
   const performAnalysis = async () => {
     setAnalyzing(true);
@@ -63,22 +71,105 @@ export default function Analyzer() {
         <div className="mb-8">
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
             {preview ? (
-              <div className="relative">
-                <img
-                  src={preview}
-                  alt="UI Preview"
-                  className="max-h-64 mx-auto object-contain"
-                />
-                <label className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer">
-                  <Upload size={16} className="mr-2" />
-                  Change Image
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                </label>
+              <div className="space-y-6">
+                {/* View Toggle Controls */}
+                {analysis?.detected_image && (
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() => setViewMode("original")}
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                        viewMode === "original"
+                          ? "bg-blue-100 text-blue-700 border border-blue-300"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      Original Only
+                    </button>
+                    <button
+                      onClick={() => setViewMode("side-by-side")}
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                        viewMode === "side-by-side"
+                          ? "bg-blue-100 text-blue-700 border border-blue-300"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      Side by Side
+                    </button>
+                    <button
+                      onClick={() => setViewMode("detected")}
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                        viewMode === "detected"
+                          ? "bg-blue-100 text-blue-700 border border-blue-300"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      Detected Only
+                    </button>
+                  </div>
+                )}
+
+                {/* Image Display Area */}
+                <div
+                  className={`flex gap-6 justify-center ${
+                    viewMode === "side-by-side"
+                      ? "flex-row"
+                      : "flex-col items-center"
+                  }`}
+                >
+                  {/* Original Image */}
+                  {(viewMode === "original" || viewMode === "side-by-side") && (
+                    <div className="flex flex-col items-center">
+                      <div className="bg-gray-50 p-1 rounded-lg border border-gray-200 shadow-sm">
+                        <img
+                          src={preview}
+                          alt="Original UI"
+                          className="max-h-64 max-w-full object-contain"
+                        />
+                      </div>
+                      <span className="mt-2 text-sm font-medium text-gray-500">
+                        Original Image
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Comparison Arrow - Only shown in side-by-side mode */}
+                  {viewMode === "side-by-side" && analysis?.detected_image && (
+                    <div className="flex items-center">
+                      <ArrowRight className="text-gray-400" size={24} />
+                    </div>
+                  )}
+
+                  {/* Detected Image */}
+                  {(viewMode === "detected" || viewMode === "side-by-side") &&
+                    analysis?.detected_image && (
+                      <div className="flex flex-col items-center">
+                        <div className="bg-gray-50 p-1 rounded-lg border border-gray-200 shadow-sm">
+                          <img
+                            src={analysis.detected_image}
+                            alt="UI with Detected Elements"
+                            className="max-h-64 max-w-full object-contain"
+                          />
+                        </div>
+                        <span className="mt-2 text-sm font-medium text-gray-500">
+                          Detected Elements
+                        </span>
+                      </div>
+                    )}
+                </div>
+
+                {/* Actions Row */}
+                <div className="flex justify-center gap-3 mt-4">
+                  <label className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer transition-colors">
+                    <Upload size={16} className="mr-2" />
+                    Upload New Image
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                </div>
               </div>
             ) : (
               <div>

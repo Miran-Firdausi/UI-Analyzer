@@ -1,0 +1,29 @@
+train: /mnt/e/Programming-Projects/AIML/CV/UI-Analyzer/backend/training/UI-Components/train/images
+val: /mnt/e/Programming-Projects/AIML/CV/UI-Analyzer/backend/training/UI-Components/valid/images
+test: /mnt/e/Programming-Projects/AIML/CV/UI-Analyzer/backend/training/UI-Components/test/images
+
+nc: 14
+names:
+  [
+    "Button",
+    "CheckBox",
+    "CheckedTextView",
+    "EditText",
+    "EditText-",
+    "ImageButton",
+    "ImageView",
+    "ProgressBar",
+    "RadioButton",
+    "RatingBar",
+    "SeekBar",
+    "Spinner",
+    "Switch",
+    "TextView",
+  ]
+
+roboflow:
+  workspace: national-university-of-sciences-and-technology-nust
+  project: ui-components-detection
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/national-university-of-sciences-and-technology-nust/ui-components-detection/dataset/5
